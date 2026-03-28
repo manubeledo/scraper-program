@@ -2,7 +2,7 @@ const inquirer = require('inquirer').default;
 const axios = require('axios');
 require('dotenv').config();
 
-const API_KEY = process.env.SERPAPI_KEY; // 👈 poné tu key acá
+const API_KEY = process.env.SERPAPI_KEY; // 👈 key de SERPAPI
 
 async function main() {
   try {
@@ -56,17 +56,36 @@ async function main() {
       });
 
     } else {
-      const results = response.data.organic_results || [];
+      let todos = [];
 
-      console.log(`Se encontraron ${results.length} resultados\n`);
+      const paginas = 10;
 
-      results.slice(0, 40).forEach(r => {
-        console.log({
-          titulo: r.title,
-          link: r.link,
-          descripcion: r.snippet
-        });
+      for (let i = 0; i < paginas; i++) { // 10 páginas = 100 resultados
+        const resp = await axios.get('https://serpapi.com/search', {
+        params: {
+         engine: 'google',
+         q: query,
+         start: i * 10,
+         api_key: API_KEY
+        }
       });
+
+      const resultados = resp.data.organic_results || [];
+
+      if (resultados.length === 0) break;
+
+      todos = todos.concat(resultados);
+    }
+
+console.log(`Se encontraron ${todos.length} resultados\n`);
+
+todos.forEach(r => {
+  console.log({
+    titulo: r.title,
+    link: r.link,
+    descripcion: r.snippet
+  });
+});
     }
 
   } catch (error) {
