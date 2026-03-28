@@ -1,7 +1,8 @@
 const inquirer = require('inquirer').default;
 const axios = require('axios');
+require('dotenv').config();
 
-const API_KEY = '8b7729012121f87d9ffd094572d6c151b5225504c183f6253cea83d0b7abeb12'; // 👈 poné tu key acá
+const API_KEY = process.env.SERPAPI_KEY; // 👈 poné tu key acá
 
 async function main() {
   try {
